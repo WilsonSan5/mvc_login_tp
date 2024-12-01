@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Model;
+
+use App\Core\SQL;
+
 class User
 {
 
@@ -45,5 +48,12 @@ class User
     //     }
     // }
 
+    public function getUserByEmail(string $email)
+    {
+        $sql = new SQL();
+        $queryPrepared = $sql->getOneByField('user', 'email', $email);
+
+        return $queryPrepared;
+    }
 
 }

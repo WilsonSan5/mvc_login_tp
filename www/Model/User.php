@@ -9,7 +9,6 @@ class User
 
     public function isLogged(): bool
     {
-
         return false;
     }
 
@@ -55,5 +54,27 @@ class User
 
         return $queryPrepared;
     }
+
+	public function insertUser($data)
+	{
+		$sql = new SQL();
+		$checkUser = $sql->getOneByField('user', 'email', $data['email']);
+		if ($checkUser) {
+			$message = 'Cet email est déjà utilisé';
+			$messageType = 'danger';
+		} else {
+			$user = $sql->insertData('user', $data);
+			$message = 'Utilisateur enregistré';
+			$messageType = 'success';
+		}
+		// GEt the user data after registration
+		$user = $sql->getOneByField('user', 'email', $data['email']);
+
+		return [
+			'message' => $message,
+			'messageType' => $messageType,
+			'userData' => $user ?? null
+		];
+	}
 
 }

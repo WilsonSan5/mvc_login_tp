@@ -32,13 +32,23 @@ class SQL
 
         if (!in_array($table, $allowedTables) || !in_array($field, $allowedFields)) {
             throw new \InvalidArgumentException("Invalid table or field provided.");
-        }
-        ;
-
+        };
         $queryPrepared = $this->pdo->prepare("SELECT * FROM " . $table . " WHERE $field = :value");
         $queryPrepared->execute([
             "value" => $value
         ]);
         return $queryPrepared->fetch();
     }
+<<<<<<< HEAD
 }
+=======
+    public function insertData(string $tableName, array $data): bool
+	{
+		$dataKeys = array_keys($data);
+		$dataValues = array_values($data);
+		$query = "INSERT INTO $tableName (".implode(", ", $dataKeys).") VALUES (:".implode(", :", $dataKeys).")";
+		$queryPrepared = $this->pdo->prepare($query);
+		return $queryPrepared->execute(array_combine($dataKeys, $dataValues));
+	}
+}
+>>>>>>> mohed

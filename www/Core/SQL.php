@@ -39,13 +39,6 @@ class SQL
         $queryPrepared->execute([
             "value" => $value
         ]);
-        var_dump($field);
         return $queryPrepared->fetch();
-        // SELECT * FROM user WHERE email = monEmail@dsad.com
     }
-    public function insertData()
-    {
-
-    }
-
 }

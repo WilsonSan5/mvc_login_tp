@@ -9,7 +9,7 @@ class Main
 
     public function home(): void
     {
-        $pseudo = "Yves";
+        $pseudo = $_SESSION['user'];
         $view = new View("Main/home.php");
         $view->addData("pseudo", $pseudo);
         $view->addData("email", "y.skrzypczyk@gmail.com");

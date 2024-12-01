@@ -10,29 +10,29 @@ class User
     {
         $view = new View("User/register.php", "front.php");
         $view->addData('title', 'Page d\'inscription Test');
-		$view->addData('description', 'Inscrivez-vous pour accéder à toutes les fonctionnalités de notre site');
+        $view->addData('description', 'Inscrivez-vous pour accéder à toutes les fonctionnalités de notre site');
 
-		if (isset($_POST['email']) && isset($_POST['password'])) {
-			$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-			extract($_POST);
-			$data = [
-				'email' => strtolower(trim($email)),
-				'password' => trim($password)
-			];
-			$userModel = new UserModel();
-			$user = $userModel->insertUser($data);
-			extract($user);
-			unset($userData['password']);
-			$data = [
-				'message' => $message,
-				'messageType' => $messageType,
-			];
-			if ($user['messageType'] !== 'success') {
-				$_SESSION['user'] = $userData;
-//				$view->addData('result', $message);
-				header("Location: /");
-			}
-		}
+        if (isset($_POST['email']) && isset($_POST['password'])) {
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            extract($_POST);
+            $data = [
+                'email' => strtolower(trim($email)),
+                'password' => trim($password)
+            ];
+            $userModel = new UserModel();
+            $user = $userModel->insertUser($data);
+            extract($user);
+            unset($userData['password']);
+            $data = [
+                'message' => $message,
+                'messageType' => $messageType,
+            ];
+            if ($user['messageType'] !== 'success') {
+                $_SESSION['user'] = $userData;
+                //				$view->addData('result', $message);
+                header("Location: /");
+            }
+        }
 
     }
 
@@ -45,7 +45,6 @@ class User
         if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplie
             $userModel = new UserModel();
             $user = $userModel->getUserByEmail($_POST['email']);
-<<<<<<< HEAD
             if (!$user || $user['password'] != $_POST['password']) {
                 $alert = 'Email ou mot de passe invalide.';
             } else {
@@ -53,8 +52,6 @@ class User
             }
         } else {
             $alert = 'Veuillez remplir les champs !';
-=======
->>>>>>> mohed
         }
         $view->addData('alert', $alert);
     }
@@ -65,8 +62,4 @@ class User
         $user->logout();
         header("Location: /");
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> mohed

@@ -15,10 +15,10 @@ class User
     public function login(): void
     {
         $alert = '';
-        $view = new View("User/login.php", "front.php");
+        $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
         $view->addData('title', 'Page de connexion');
 
-        if (isset($_POST['email']) && isset($_POST['password'])) {
+        if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplie
             $userModel = new UserModel();
             $user = $userModel->getUserByEmail($_POST['email']);
             if (!$user || $user['password'] != $_POST['password']) {
@@ -26,6 +26,8 @@ class User
             } else {
                 $alert = 'Connecté !';
             }
+        } else {
+            $alert = 'Veuillez remplir les champs !';
         }
         $view->addData('alert', $alert);
     }

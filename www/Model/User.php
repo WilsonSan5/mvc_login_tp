@@ -7,10 +7,21 @@ use App\Core\SQL;
 class User
 {
 
+	/**
+	 * The method to validate email
+	 * @param string $email
+	 * @return bool
+	 */
 	private function validateEmail(string $email): bool
 	{
 		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
+
+	/**
+	 * The method to validate password
+	 * @param string $password
+	 * @return bool
+	 */
 	private function validatePassword(string $password): bool
 	{
 		if (empty($password)) {
@@ -22,7 +33,13 @@ class User
 		return true;
 	}
 
-	private function returnError($message, $messageType): array
+	/**
+	 * The method to return an error message
+	 * @param string $message
+	 * @param string $messageType
+	 * @return array
+	 */
+	private function returnError(string $message, string $messageType): array
 	{
 		return [
 			'message' => $message,
@@ -30,7 +47,11 @@ class User
 		];
 	}
 
-    public function isLogged(): bool
+	/**
+	 * The method to check if a user is logged
+	 * @return bool
+	 */
+	public function isLogged(): bool
     {
 		if (isset($_SESSION['user'])) {
 			return true;
@@ -38,7 +59,11 @@ class User
         return false;
     }
 
-    public function logout(): void
+	/**
+	 * The method to log a user in
+	 * @return void
+	 */
+	public function logout(): void
     {
         session_destroy();
     }
@@ -53,10 +78,10 @@ class User
 
 	/**
 	 * The method to insert a user in the database after validation
-	 * @param $data
+	 * @param array $data
 	 * @return array
 	 */
-	public function insertUser($data): array
+	public function insertUser(array $data): array
 	{
 		// Validate email and password
 		if (!$this->validateEmail($data['email'])) {
@@ -98,5 +123,4 @@ class User
 			$this->returnError($message, $messageType);
 		}
 	}
-
 }

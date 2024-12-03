@@ -8,6 +8,10 @@ use App\Core\Messages;
 
 class User
 {
+	/**
+	 * The method to register a user and redirect to the home page after successful registration
+	 * @return void
+	 */
 	public function register(): void
 	{
 		$userModel = new UserModel();
@@ -16,7 +20,6 @@ class User
 			header("Location: /");
 			exit;
 		}
-
 		$view = new View("User/register.php", "front.php");
 		$view->addData('title', 'Page d\'inscription Test');
 		$view->addData('description', 'Inscrivez-vous pour accéder à toutes les fonctionnalités de notre site');
@@ -28,6 +31,7 @@ class User
 				$view->addData('data', $data);
 				return;
 			}
+			// Sanitize $_POST super global
 			$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 			$formData = [
 				'email' => strtolower(trim($_POST['email'])),
@@ -36,9 +40,12 @@ class User
 
 			$result = $userModel->insertUser($formData);
 			if ($result['messageType'] === 'danger' || $result['messageType'] === 'error') {
+				// Set message in a session on Error.
 				Messages::setMessage($result['message'], 'error');
 			} else {
+				// On success, redirect to the home page with a success message.
 				Messages::setMessage($result['message'], 'success');
+				// Unset password from the user object before storing it in the session.
 				unset($result['user']->password);
 				$_SESSION['user'] = $result['user'];
 				header("Location: /");

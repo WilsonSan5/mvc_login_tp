@@ -7,8 +7,34 @@ use App\Core\SQL;
 class User
 {
 
+	private function validateEmail(string $email): bool
+	{
+		return filter_var($email, FILTER_VALIDATE_EMAIL);
+	}
+	private function validatePassword(string $password): bool
+	{
+		if (empty($password)) {
+			return false;
+		}
+		if (strlen($password) < 8) {
+			return false;
+		}
+		return true;
+	}
+
+	private function returnError($message, $messageType): array
+	{
+		return [
+			'message' => $message,
+			'messageType' => $messageType
+		];
+	}
+
     public function isLogged(): bool
     {
+		if (isset($_SESSION['user'])) {
+			return true;
+		}
         return false;
     }
 
@@ -16,36 +42,6 @@ class User
     {
         session_destroy();
     }
-
-    // public function login(): void
-    // {// Check if user is logged in if so redirect to the home page
-    //     if (isset($_SESSION['user'])) {
-    //         header("Location: /");
-    //     }// Load the view$view = new View("User/login.php", "front.php");// Add the title to the view$view->addData('title', 'Connexion');
-
-    //     // Check if the form is submitted
-    //     if (isset($_POST['submit'])) {
-    //         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-    //         extract($_POST);
-    //         $data = [
-    //             'email' => strtolower(trim($email)),
-    //             'password' => trim($password)
-    //         ];
-    //         // SQL request
-    //         $sql = new SQL();
-
-    //         // Check if the user exists
-    //         $result = $sql->getUser("user", $data);
-
-    //         // If the user exists, store the user in the session and redirect to the home page
-    //         if ($result['user']) {
-    //             $_SESSION['user'] = $result['user'];
-    //             header("Location: /");
-    //         } else {
-    //             $view->addData('result', $result);
-    //         }
-    //     }
-    // }
 
     public function getUserByEmail(string $email)
     {
@@ -55,26 +51,52 @@ class User
         return $queryPrepared;
     }
 
-	public function insertUser($data)
+	/**
+	 * The method to insert a user in the database after validation
+	 * @param $data
+	 * @return array
+	 */
+	public function insertUser($data): array
 	{
-		$sql = new SQL();
-		$checkUser = $sql->getOneByField('user', 'email', $data['email']);
+		// Validate email and password
+		if (!$this->validateEmail($data['email'])) {
+			$message = 'Email invalide';
+			$messageType = 'danger';
+			return $this->returnError($message, $messageType);
+		}
+		if (!$this->validatePassword($data['password'])) {
+			$message = 'Mot de passe invalide';
+			$messageType = 'danger';
+			return $this->returnError($message, $messageType);
+		}
+		$checkUser = $this->getUserByEmail($data['email']);
 		if ($checkUser) {
 			$message = 'Cet email est déjà utilisé';
 			$messageType = 'danger';
-		} else {
-			$user = $sql->insertData('user', $data);
-			$message = 'Utilisateur enregistré';
-			$messageType = 'success';
+			return $this->returnError($message, $messageType);
 		}
-		// GEt the user data after registration
-		$user = $sql->getOneByField('user', 'email', $data['email']);
-
-		return [
-			'message' => $message,
-			'messageType' => $messageType,
-			'userData' => $user ?? null
+		$password = password_hash($data['password'], PASSWORD_BCRYPT);
+		$user = [
+			'email' => $data['email'],
+			'password' => $password
 		];
+		$sql = new SQL();
+		$inserted = $sql->insertData('user', $user);
+
+		if ($inserted) {
+			$user = $this->getUserByEmail($data['email']);
+			$message = 'Inscription réussie';
+			$messageType = 'success';
+			return [
+				'message' => $message,
+				'messageType' => $messageType,
+				'user' => $user
+			];
+		} else {
+			$message = 'Erreur lors de l\'inscription';
+			$messageType = 'danger';
+			$this->returnError($message, $messageType);
+		}
 	}
 
 }

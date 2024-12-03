@@ -14,11 +14,11 @@ class User
     public function register(): void
     {
         $userModel = new UserModel();
-        if ($userModel->isLogged()) {
-            Messages::setMessage('Vous êtes déjà connecté', 'error');
-            header("Location: /");
-            exit;
-        }
+        // if ($userModel->isLogged()) {
+        //     Messages::setMessage('Vous êtes déjà connecté', 'error');
+        //     header("Location: /");
+        //     exit;
+        // }
         $view = new View("User/register.php", "front.php");
         $view->addData('title', 'Page d\'inscription Test');
         $view->addData('description', 'Inscrivez-vous pour accéder à toutes les fonctionnalités de notre site');
@@ -55,23 +55,37 @@ class User
 
     public function login(): void
     {
-        $alert = '';
+        $alert = ''; // Définir une valeur par défaut pour $alert
         $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
         $view->addData('title', 'Page de connexion');
 
-        if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplie
-            $userModel = new UserModel();
-            $user = $userModel->getUserByEmail($_POST['email']);
-            if (!$user || $user['password'] != $_POST['password']) {
-                $alert = 'Email ou mot de passe invalide.';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Vérifier si la méthode est POST
+            if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplis
+                $userModel = new UserModel();
+                $user = $userModel->getUserByEmail($_POST['email']); // Supposons que $user soit un objet
+
+                if (!$user) {
+                    $alert = 'Email ou mot de passe invalide.';
+                } else {
+                    // Utiliser password_verify pour comparer
+                    if (password_verify($_POST['password'], $user->password)) {
+                        $alert = 'Connecté !';
+                        $_SESSION['user'] = $user;
+                        header("Location: /");
+                        exit;
+                    } else {
+                        $alert = 'Email ou mot de passe invalide.';
+                    }
+                }
             } else {
-                $alert = 'Connecté !';
+                $alert = 'Veuillez remplir les champs !';
             }
-        } else {
-            $alert = 'Veuillez remplir les champs !';
         }
+
+        // Ajouter $alert aux données de la vue (fait une seule fois)
         $view->addData('alert', $alert);
     }
+
 
     public function logout(): void
     {

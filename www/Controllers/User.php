@@ -14,20 +14,19 @@ class User
     public function register(): void
     {
         $userModel = new UserModel();
-        // if ($userModel->isLogged()) {
-        //     Messages::setMessage('Vous êtes déjà connecté', 'error');
-        //     header("Location: /");
-        //     exit;
-        // }
+         if ($userModel->isLogged()) {
+             Messages::setMessage('Vous êtes déjà connecté', 'error');
+             header("Location: /");
+             exit;
+         }
         $view = new View("User/register.php", "front.php");
-        $view->addData('title', 'Page d\'inscription Test');
+		$view->addData('title', 'Page d\'inscription');
         $view->addData('description', 'Inscrivez-vous pour accéder à toutes les fonctionnalités de notre site');
         $data = [];
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Early return if necessary data is missing
-            if (!isset($_POST['email']) || !isset($_POST['password'])) {
-                $data['message'] = 'Veuillez remplir tous les champs';
-                $view->addData('data', $data);
+            if (empty($_POST['email']) || empty($_POST['password'])) {
+				Messages::setMessage('Veuillez remplir tous les champs', 'error');
                 return;
             }
             // Sanitize $_POST super global
@@ -40,7 +39,7 @@ class User
             $result = $userModel->insertUser($formData);
             if ($result['messageType'] === 'danger' || $result['messageType'] === 'error') {
                 // Set message in a session on Error.
-                Messages::setMessage($result['message'], 'error');
+                Messages::setMessage($result['message'], $result['messageType']);
             } else {
                 // On success, redirect to the home page with a success message.
                 Messages::setMessage($result['message'], 'success');

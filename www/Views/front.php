@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <title><?= $title ?? "Titre de page" ?></title>
     <meta name="description" content="<?= $description ?? "ceci est la description de ma page" ?>">
+    <link rel="stylesheet" href="/Public/assests/css/main.css">
 </head>
 
 <body>
-    <?php include "../Views/partials/header.html" ?>
-    <h1><?= $title ?? "Titre de page" ?></h1>
+    <?php include "../Views/partials/header.php" ?>
+<!--    <h1>--><?php //= $title ?? "" ?><!--</h1>-->
     <?php include "../Views/" . $this->v; ?>
 </body>
 

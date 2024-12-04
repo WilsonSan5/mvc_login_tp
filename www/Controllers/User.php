@@ -57,7 +57,7 @@ class User
     {
         $alert = ''; // Définir une valeur par défaut pour $alert
         $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
-        $view->addData('title', 'Page de connexion');
+        $view->addData('title', '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Vérifier si la méthode est POST
             if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplis

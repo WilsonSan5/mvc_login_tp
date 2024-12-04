@@ -56,34 +56,28 @@ class User
     public function login(): void
     {
         $alert = ''; // Définir une valeur par défaut pour $alert
-        $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
+        $view = new View("User/login.html", "front.php"); // Appeler la bonne vue
         $view->addData('title', 'Page de connexion');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Vérifier si la méthode est POST
             if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplis
                 $userModel = new UserModel();
-                $user = $userModel->getUserByEmail($_POST['email']); // Supposons que $user soit un objet
+                $result = $userModel->checkPassword($_POST['email'], $_POST['password']); // Supposons que $user soit un objet
 
-                if (!$user) {
-                    $alert = 'Email ou mot de passe invalide.';
+                if ($result['messageType'] === 'danger') {
+                    Messages::setMessage($result['message'], 'error');
                 } else {
-                    // Utiliser password_verify pour comparer
-                    if (password_verify($_POST['password'], $user->password)) {
-                        $alert = 'Connecté !';
-                        $_SESSION['user'] = $user;
-                        header("Location: /");
-                        exit;
-                    } else {
-                        $alert = 'Email ou mot de passe invalide.';
-                    }
+                    $_SESSION['user'] = $result['user'];
+                    header("Location: /");
+                    exit;
                 }
             } else {
-                $alert = 'Veuillez remplir les champs !';
+                Messages::setMessage('Veuillez remplir les champs !', 'danger');
             }
         }
 
-        // Ajouter $alert aux données de la vue (fait une seule fois)
-        $view->addData('alert', $alert);
+        // Ajouter message aux données de la vue (fait une seule fois)
+        $view->addData('message', Messages::getMessages());
     }
 
 

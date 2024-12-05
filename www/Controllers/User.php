@@ -54,38 +54,29 @@ class User
 
     public function login(): void
     {
-        $alert = ''; // Définir une valeur par défaut pour $alert
         $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
         $view->addData('title', 'Page de connexion');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Vérifier si la méthode est POST
-            if (isset($_POST['email']) && isset($_POST['password'])) { // Vérifier si les champs sont remplis
-                $userModel = new UserModel();
-                $user = $userModel->getUserByEmail($_POST['email']); // Supposons que $user soit un objet
-
-                if (!$user) {
-                    $alert = 'Email ou mot de passe invalide.';
-                } else {
-                    // Utiliser password_verify pour comparer
-                    if (password_verify($_POST['password'], $user->password)) {
-                        $alert = 'Connecté !';
-                        $_SESSION['user'] = $user;
-                        header("Location: /");
-                        exit;
-                    } else {
-                        $alert = 'Email ou mot de passe invalide.';
-                    }
-                }
-            } else {
-                $alert = 'Veuillez remplir les champs !';
-            }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { // Vérifier que la methode est POST
+            Messages::setMessage('Method not allowed', 'danger');
+            return;
         }
 
-        // Ajouter $alert aux données de la vue (fait une seule fois)
-        $view->addData('alert', $alert);
+        if (empty($_POST['email']) && empty($_POST['password'])) { // Vérifier que les champs sont remplies
+            Messages::setMessage('Veuillez remplir les champs !', 'danger');
+            return;
+        }
+        $userModel = new UserModel();
+        $result = $userModel->checkPassword($_POST['email'], $_POST['password']); // Vérifier que le password est correct
+        if ($result['messageType'] === 'danger') {
+            Messages::setMessage($result['message'], 'error');
+            return;
+        }
+        // Si toutes les vérifications sont OK
+        $_SESSION['user'] = $result['user'];
+        header("Location: /");
+        exit;
     }
-
-
     public function logout(): void
     {
         $user = new UserModel();

@@ -52,29 +52,29 @@ class User
 	 * @return bool
 	 */
 	public function isLogged(): bool
-    {
+	{
 		if (isset($_SESSION['user'])) {
 			return true;
 		}
-        return false;
-    }
+		return false;
+	}
 
 	/**
 	 * The method to log a user in
 	 * @return void
 	 */
 	public function logout(): void
-    {
-        session_destroy();
-    }
+	{
+		session_destroy();
+	}
 
-    public function getUserByEmail(string $email)
-    {
-        $sql = new SQL();
-        $queryPrepared = $sql->getOneByField('user', 'email', $email);
+	public function getUserByEmail(string $email)
+	{
+		$sql = new SQL();
+		$queryPrepared = $sql->getOneByField('user', 'email', $email);
 
-        return $queryPrepared;
-    }
+		return $queryPrepared;
+	}
 
 	/**
 	 * The method to insert a user in the database after validation
@@ -123,4 +123,27 @@ class User
 			$this->returnError($message, $messageType);
 		}
 	}
+	/**
+	 * The method to validate email
+	 * @param string $email
+	 * @param string $password
+	 * 
+	 */
+	public function checkPassword($email, $password)
+	{
+		$user = $this->getUserByEmail($email);
+		if ($user && password_verify($password, $user->password)) {
+			return [
+				'message' => 'Connexion réussie',
+				'messageType' => 'success',
+				'user' => $user
+			];
+		} else {
+			return [
+				'message' => 'Email ou mot de passe incorrect',
+				'messageType' => 'danger'
+			];
+		}
+	}
 }
+

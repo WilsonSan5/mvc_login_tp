@@ -31,9 +31,17 @@ class User
             }
             // Sanitize $_POST super global
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			// Check if the password and confirm password match
+			if ($_POST['password'] !== $_POST['confirm_password']) {
+				Messages::setMessage('Les mots de passe ne correspondent pas', 'error');
+				return;
+			}
+
             $formData = [
                 'email' => strtolower(trim($_POST['email'])),
-                'password' => trim($_POST['password'])
+                'password' => trim($_POST['password']),
+				'firstname' => trim($_POST['firstname']),
+				'lastname' => trim($_POST['lastname'])
             ];
 
             $result = $userModel->insertUser($formData);

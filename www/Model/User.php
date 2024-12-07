@@ -89,24 +89,25 @@ class User
 			$messageType = 'danger';
 			return $this->returnError($message, $messageType);
 		}
+		// Check if the password is valid
 		if (!$this->validatePassword($data['password'])) {
 			$message = 'Mot de passe invalide';
 			$messageType = 'danger';
 			return $this->returnError($message, $messageType);
 		}
+		// Check if the email is already used
 		$checkUser = $this->getUserByEmail($data['email']);
 		if ($checkUser) {
 			$message = 'Cet email est déjà utilisé';
 			$messageType = 'danger';
 			return $this->returnError($message, $messageType);
 		}
-		$password = password_hash($data['password'], PASSWORD_BCRYPT);
-		$user = [
-			'email' => $data['email'],
-			'password' => $password
-		];
+
+		// Hash the password
+		$data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+		// Insert the user in the database
 		$sql = new SQL();
-		$inserted = $sql->insertData('user', $user);
+		$inserted = $sql->insertData('user', $data);
 
 		if ($inserted) {
 			$user = $this->getUserByEmail($data['email']);
@@ -146,4 +147,3 @@ class User
 		}
 	}
 }
-

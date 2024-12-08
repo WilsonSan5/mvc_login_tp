@@ -4,9 +4,8 @@ namespace App\Model;
 
 use App\Core\SQL;
 
-class User
+class User extends SQL
 {
-
 	/**
 	 * The method to validate email
 	 * @param string $email
@@ -68,12 +67,14 @@ class User
 		session_destroy();
 	}
 
-	public function getUserByEmail(string $email)
+	/**
+	 * The method to get a user by email
+	 * @param string $email
+	 * @return mixed
+	 */
+	public function getUserByEmail(string $email): mixed
 	{
-		$sql = new SQL();
-		$queryPrepared = $sql->getOneByField('user', 'email', $email);
-
-		return $queryPrepared;
+		return $this->getOneByField('user', 'email', $email);
 	}
 
 	/**
@@ -106,8 +107,7 @@ class User
 		// Hash the password
 		$data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
 		// Insert the user in the database
-		$sql = new SQL();
-		$inserted = $sql->insertData('user', $data);
+		$inserted = $this->insertData('user', $data);
 
 		if ($inserted) {
 			$user = $this->getUserByEmail($data['email']);
@@ -124,13 +124,14 @@ class User
 			$this->returnError($message, $messageType);
 		}
 	}
+
 	/**
 	 * The method to validate email
 	 * @param string $email
 	 * @param string $password
-	 * 
+	 * @return array
 	 */
-	public function checkPassword($email, $password)
+	public function checkPassword(string $email, string $password): array
 	{
 		$user = $this->getUserByEmail($email);
 		if ($user && password_verify($password, $user->password)) {

@@ -79,3 +79,34 @@ body {
     background-color: var(--primary-hover);
     transform: translateY(-2px);
   }
+
+  .alert {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-md);
+  }
+
+    .alert-danger {
+        background-color: var(--error-color);
+        color: white;
+    }
+
+    .alert-success {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .alert-warning {
+        background-color: var(--warning-color);
+        color: white;
+    }
+
+    .alert-info {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .alert-error {
+        background-color: var(--error-color);
+        color: white;
+    }

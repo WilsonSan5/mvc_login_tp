@@ -147,4 +147,45 @@ class User extends SQL
 			];
 		}
 	}
+
+	/**
+	 * The method to update a user
+	 * @param array $data
+	 * @param int $id
+	 * @return array
+	 */
+	public function updateUser(array $data, int $id): array
+	{
+		// Validate email and password
+		if (!$this->validateEmail($data['email'])) {
+			$message = 'Email invalide';
+			$messageType = 'danger';
+			return $this->returnError($message, $messageType);
+		}
+		// Check if the email is already used
+		$checkUser = $this->getUserByEmail($data['email']);
+		if ($checkUser && $checkUser->id !== $id) {
+			$message = 'Cet email est déjà utilisé';
+			$messageType = 'danger';
+			return $this->returnError($message, $messageType);
+		}
+		// Update the user in the database
+		$updated = $this->updateData('user', $data, $id);
+		if ($updated) {
+			$user = $this->getOneById('user', $id);
+			$message = 'Profil modifié';
+			$messageType = 'success';
+			return [
+				'message' => $message,
+				'messageType' => $messageType,
+				'user' => $user
+			];
+		} else {
+			$message = 'Erreur lors de la modification';
+			$messageType = 'danger';
+			$this->returnError($message, $messageType);
+		}
+	}
+
+
 }

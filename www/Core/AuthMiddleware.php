@@ -23,4 +23,12 @@ class AuthMiddleware
 			exit;
 		}
 	}
+
+	public static function getFullName(): string
+	{
+		if (self::isLogged()) {
+			return $_SESSION['user']->lastname . ' ' . $_SESSION['user']->firstname;
+		}
+		return '';
+	}
 }

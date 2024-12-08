@@ -41,6 +41,7 @@ class User
 				return;
 			}
 			$userModel = new UserModel();
+			unset($data['confirm_password']);
 			$result = $userModel->insertUser($data);
 			if ($result['messageType'] === 'danger' || $result['messageType'] === 'error') {
 				// Set message in a session on Error.
@@ -94,7 +95,41 @@ class User
 		header("Location: /login");
 	}
 
+	/**
+	 * The method to edit the user profile
+	 * @return void
+	 */
+	public function edit(): void
+	{
+		AuthMiddleware::requireLogin();
+		$view = new View("User/edit.php", "front.php");
+		$view->addData('title', 'Modifier mon profil');
+		$view->addData('description', 'Modifiez votre profil pour accéder à toutes les fonctionnalités de notre site');
 
+		$data = [];
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			$data = $this->dataCheckerAndCleaner($_POST);
+			if (!$data) {
+				return;
+			}
+			$userModel = new UserModel();
+			$result = $userModel->updateUser($data, $_SESSION['user']->id);
+			if ($result['messageType'] === 'danger' || $result['messageType'] === 'error') {
+				Messages::setMessage($result['message'], $result['messageType']);
+			} else {
+				Messages::setMessage($result['message'], 'success');
+				$_SESSION['user'] = $result['user'];
+			}
+		}
+	}
+
+
+	/**
+	 * The method to check the data from the form and clean it
+	 * @param array $data
+	 * @return array|bool
+	 */
 	private function dataCheckerAndCleaner(array $data): array|bool
 	{
 		foreach ($data as $key => $value) {

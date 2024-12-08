@@ -29,8 +29,6 @@ if (!empty($messages)) {
         <label for="password">Mot de passe</label>
         <input id="password" name="password" type="password" placeholder="Entrez votre mot de passe" />
       </div>
-
-
       <button type="submit" name="submit" class="submit-btn">Se connecter</button>
     </form>
   </div>

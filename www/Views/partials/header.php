@@ -1,13 +1,13 @@
 <header>
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="nav-logo">mvc_login_tp</a>
+            <a href="/" class="nav-logo">ProjetX</a>
             <div class="nav-links">
                 <?php if (isset($_SESSION['user'])): ?>
                     <!-- Partie pour un utilisateur connecté -->
                     <a href="/logout" class="nav-link">Déconnexion</a>
-                    <a href="/" class="nav-button">
-                        <?php echo htmlspecialchars($_SESSION['user']->email ?? 'Utilisateur'); ?>
+                    <a href="/edit?id=<?=$_SESSION['user']->id?>" class="nav-button">
+                        <?php echo htmlspecialchars(\App\Core\AuthMiddleware::getFullName()); ?>
                     </a>
                 <?php else: ?>
                     <!-- Partie pour un utilisateur déconnecté -->

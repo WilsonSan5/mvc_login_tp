@@ -15,10 +15,11 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta charset="UTF-8">
     <title><?= $title ?? "Titre de page" ?></title>
     <meta name="description" content="<?= $description ?? "Ceci est la description de ma page" ?>">
-    <link rel="stylesheet" href="../Views/css/reset.css">
-    <link rel="stylesheet" href="../Views/css/variables.css">
-    <link rel="stylesheet" href="../Views/css/main.css">
-    <link rel="stylesheet" href="../Views/css/navbar.css">
+    <link rel="stylesheet" href="/Public/assets/css/reset.css">
+    <link rel="stylesheet" href="/Public/assets/css/variables.css">
+    <link rel="stylesheet" href="/Public/assets/css/main.css">
+    <link rel="stylesheet" href="/Public/assets/css/navbar.css">
+    <link rel="stylesheet" href="/Public/assets/css/login.css">
 </head>
 
 <body>

@@ -63,7 +63,7 @@ class User
     public function login(): void
     {
         $view = new View("User/login.php", "front.php"); // Appeler la bonne vue
-        $view->addData('title', 'Page de connexion');
+        $view->addData('title', '');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { // Vérifier que la methode est POST
             Messages::setMessage('Method not allowed', 'danger');

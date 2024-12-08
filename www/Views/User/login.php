@@ -3,29 +3,30 @@ use App\Core\Messages;
 
 $messages = Messages::getMessages();
 if (!empty($messages)) {
-    $messageType = '';
-    $messageContent = '';
-    foreach ($messages as $message) {
-        $messageType = $message['type'];
-        $messageContent = $message['message'];
-    }
+  $messageType = '';
+  $messageContent = '';
+  foreach ($messages as $message) {
+    $messageType = $message['type'];
+    $messageContent = $message['message'];
+  }
 }
 ?>
+<div class="container">
+  <div class="login-card">
+    <h2>Connexion</h2>
+    <form id="loginForm" method="POST" action="/login" class="login-form">
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input id="email" name="email" type="email" required placeholder="Entrez votre email" />
+      </div>
 
-<form class="form" action="/login" method="post">
-    <div class="title">Connexion</div>
-    <span class="message message-<?= $messageType ?>">
-        <?= $messageContent ?? '' ?>
-    </span>
-    <div class="input-container ic2">
-        <input id="email" class="input" name="email" type="text" placeholder=" " />
-        <div class="cut cut-short"></div>
-        <label for="email" class="placeholder">Email</>
-    </div>
-    <div class="input-container ic2">
-        <input id="lastname" class="input" name="password" type="password" placeholder=" " />
-        <div class="cut"></div>
-        <label for="lastname" class="placeholder">Mot de passe</label>
-    </div>
-    <button type="text" class="submit">Valider</button>
-</form>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" required placeholder="Entrez votre mot de passe" />
+      </div>
+
+
+      <button type="submit" class="submit-btn">Se connecter</button>
+    </form>
+  </div>
+</div>

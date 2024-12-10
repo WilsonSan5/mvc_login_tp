@@ -1,11 +1,34 @@
 <?php
-
 namespace App\Model;
-
 use App\Core\SQL;
 
 class User extends SQL
 {
+	private string $tableName = 'user';
+
+	private array $fieldsAllowed = ['email', 'lastname' ,'firstname', 'password'];
+
+	/**
+	 * The constructor
+	 * Create the table user given the fields to add the fields in the database
+	 * add them here with the proper SQL syntax.
+	 * @return void
+	 */
+	public function __construct	()
+	{
+		parent::__construct();
+		$fields = [
+			'id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY',
+			'email VARCHAR(320) NOT NULL',
+			'lastname VARCHAR(255) NOT NULL',
+			'firstname VARCHAR(255) NOT NULL',
+			'password VARCHAR(255) NOT NULL',
+			'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+			'updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+		];
+		parent::createTable($this->tableName, $fields);
+	}
+
 	/**
 	 * The method to validate email
 	 * @param string $email
@@ -74,7 +97,7 @@ class User extends SQL
 	 */
 	public function getUserByEmail(string $email): mixed
 	{
-		return $this->getOneByField('user', 'email', $email);
+		return $this->getOneByField($this->tableName, 'email', $email);
 	}
 
 	/**
@@ -96,6 +119,7 @@ class User extends SQL
 			$messageType = 'danger';
 			return $this->returnError($message, $messageType);
 		}
+
 		// Check if the email is already used
 		$checkUser = $this->getUserByEmail($data['email']);
 		if ($checkUser) {
@@ -107,7 +131,7 @@ class User extends SQL
 		// Hash the password
 		$data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
 		// Insert the user in the database
-		$inserted = $this->insertData('user', $data);
+		$inserted = $this->insertData($this->tableName, $data);
 
 		if ($inserted) {
 			$user = $this->getUserByEmail($data['email']);
@@ -169,10 +193,11 @@ class User extends SQL
 			$messageType = 'danger';
 			return $this->returnError($message, $messageType);
 		}
+
 		// Update the user in the database
-		$updated = $this->updateData('user', $data, $id);
+		$updated = $this->updateData($this->tableName, $data, $id);
 		if ($updated) {
-			$user = $this->getOneById('user', $id);
+			$user = $this->getOneById($this->tableName, $id);
 			$message = 'Profil modifié';
 			$messageType = 'success';
 			return [
@@ -186,6 +211,4 @@ class User extends SQL
 			$this->returnError($message, $messageType);
 		}
 	}
-
-
 }

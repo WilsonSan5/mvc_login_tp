@@ -18,6 +18,18 @@ class SQL
 		}
 	}
 
+	public function createTable(string $tableName, array $fields): void
+	{
+		$query = "CREATE TABLE IF NOT EXISTS $tableName (";
+		foreach ($fields as $field) {
+			$query .= "$field, ";
+		}
+		$query = substr($query, 0, -2);
+		$query .= ")";
+		$this->pdo->exec($query);
+	}
+
+
 	/**
 	 * The method to get the rows from a table based on the id
 	 * @param string $table
@@ -80,9 +92,9 @@ class SQL
 	 */
 	public function updateData(string $tableName, array $data, int $id): bool
 	{
-		// Check if the table is allowed
+//		// Check if the table is allowed
 		$this->checkTable($tableName);
-		// Get the keys of the data array to use them in the query
+//		// Get the keys of the data array to use them in the query
 		$dataKeys = array_keys($data);
 		// Build the query
 		$query = "UPDATE $tableName SET ";
